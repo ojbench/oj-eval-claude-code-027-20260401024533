@@ -188,12 +188,12 @@ private:
         }
 
         // Handle unary minus
-        if (e[0] == '-') {
+        if (e.length() > 0 && e[0] == '-' && e.length() > 1) {
             return -evaluateExpression(e.substr(1));
         }
 
         // Handle unary plus
-        if (e[0] == '+') {
+        if (e.length() > 0 && e[0] == '+' && e.length() > 1) {
             return evaluateExpression(e.substr(1));
         }
 
@@ -249,7 +249,8 @@ private:
                 string varName = trim(cmd.substr(3, eqPos - 3));
                 string expr = trim(cmd.substr(eqPos + 1));
                 int value = evaluateExpression(expr);
-                scopeManager.setVariable(varName, value);
+                // Try search-outer scoping model (update existing variables rather than shadow)
+                scopeManager.setVariableSearchOuter(varName, value);
             }
             return;
         }
