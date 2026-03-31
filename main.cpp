@@ -87,6 +87,13 @@ private:
         return str.substr(first, last - first + 1);
     }
 
+    // Convert string to uppercase
+    string toUpper(const string& str) {
+        string result = str;
+        for (char& c : result) c = toupper(c);
+        return result;
+    }
+
     // Check if string is a number
     bool isNumber(const string& s) {
         if (s.empty()) return false;
@@ -204,7 +211,8 @@ private:
 
         // Check if it's a variable
         if (isVarStart(e[0])) {
-            return scopeManager.getVariable(e);
+            // Variable names are case-insensitive in BASIC
+            return scopeManager.getVariable(toUpper(e));
         }
 
         return 0;
@@ -246,7 +254,7 @@ private:
         if (cmdUpper.substr(0, 3) == "LET") {
             size_t eqPos = cmd.find('=');
             if (eqPos != string::npos) {
-                string varName = trim(cmd.substr(3, eqPos - 3));
+                string varName = toUpper(trim(cmd.substr(3, eqPos - 3)));
                 string expr = trim(cmd.substr(eqPos + 1));
                 int value = evaluateExpression(expr);
                 // Try search-outer scoping model (update existing variables rather than shadow)
@@ -275,10 +283,10 @@ private:
 
         // Handle INPUT
         if (cmdUpper.substr(0, 5) == "INPUT") {
-            string varName = trim(cmd.substr(5));
+            string varName = toUpper(trim(cmd.substr(5)));
             int value;
             if (cin >> value) {
-                scopeManager.setVariable(varName, value);
+                scopeManager.setVariableSearchOuter(varName, value);
             }
             return;
         }
