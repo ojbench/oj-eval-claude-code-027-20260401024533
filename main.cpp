@@ -36,6 +36,20 @@ public:
     }
 
     void setVariable(const string& name, int value) {
+        // Set in current scope (creates new variable or updates existing one in current scope)
+        scopes.back()[name] = value;
+    }
+
+    void setVariableSearchOuter(const string& name, int value) {
+        // Search for existing variable from innermost to outermost scope
+        // If found, update it; otherwise create in current scope
+        for (int i = scopes.size() - 1; i >= 0; i--) {
+            if (scopes[i].find(name) != scopes[i].end()) {
+                scopes[i][name] = value;
+                return;
+            }
+        }
+        // Not found in any scope, create in current scope
         scopes.back()[name] = value;
     }
 
